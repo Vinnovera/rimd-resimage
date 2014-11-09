@@ -1,6 +1,5 @@
 <?php
 
-
 class ResImage {
 	private $cachefile;
 	// Directroy needs to be below the current working directory
@@ -30,8 +29,8 @@ class ResImage {
 		$inode = fileinode($img);
 
 		// Do a little prep to find the filename of the resized and scaled file, so we can test if it's cached
-		$w ? $width = '-' . $w : $width = '';
-		$h ? $height = 'x' . $h : $height = '';
+		$w ? $width = '-w' . $w : $width = '';
+		$h ? $height = '-h' . $h : $height = '';
 
 		$pi = pathinfo($img);
 
@@ -57,7 +56,7 @@ class ResImage {
 			$fileMimeType = $this->getMimeType($img);
 
 			if($fileMimeType == 'image/jpeg') {
-				$quality = 30;
+				$quality = 60;
 				// Create image
 				$i = $this->getNewJpeg($img);
 
@@ -91,8 +90,20 @@ class ResImage {
 		$size = getimagesize($img);
 		$origWidth = intval($size[0]);
 		$origHeight = intval($size[1]);
-		$w = ($w) ? $w : $origWidth;
-		$h = ($h) ? $h : $origHeight;
+
+		if(!$w || !$h) {
+			if($w) {
+				$h = $w * ($origHeight / $origWidth);
+				$h = ~~$h; // Round down
+			} else if($h) {
+				$w = $h * ($origWidth / $origHeight);
+				$w = ~~$w; //Round down
+			} else {
+				$w = $origWidth;
+				$h = $origHeight;
+			}
+		}
+
 		$origRatio = $origWidth / $origHeight;
 		$ratio = $w / $h;
 
