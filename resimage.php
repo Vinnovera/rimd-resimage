@@ -91,6 +91,8 @@ class ResImage {
 		$size = getimagesize($img);
 		$origWidth = intval($size[0]);
 		$origHeight = intval($size[1]);
+		$w = ($w) ? $w : $origWidth;
+		$h = ($h) ? $h : $origHeight;
 		$origRatio = $origWidth / $origHeight;
 		$ratio = $w / $h;
 
